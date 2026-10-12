@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { cn } from "@/lib/utils";
 import AuthActions from "./auth-actions";
 import Logo from "./logo";
@@ -14,11 +14,44 @@ const links = [
   { href: "/properties", label: "Properties" },
 ];
 
-const Navbar = () => {
-  const [open, setOpen] = useState(false);
+interface LinkListProps {
+  pathname: string | null;
+  mobile?: boolean;
+  onNavigate?: () => void;
+}
+
+const LinkList = ({ pathname, mobile = false, onNavigate }: LinkListProps) => {
+  const isActive = (href: string) => pathname !== null && (href === "/" ? pathname === "/" : pathname.startsWith(href));
+
+  return (
+    <>
+      {links.map((link) => (
+        <Link
+          key={link.href}
+          href={link.href}
+          onClick={onNavigate}
+          aria-current={isActive(link.href) ? "page" : undefined}
+          className={cn(
+            "rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted",
+            mobile && "block",
+            isActive(link.href) ? "text-primary" : mobile ? "text-foreground" : "text-muted-foreground"
+          )}
+        >
+          {link.label}
+        </Link>
+      ))}
+    </>
+  );
+};
+
+const ActiveLinkList = (props: Omit<LinkListProps, "pathname">) => {
   const pathname = usePathname();
 
-  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  return <LinkList pathname={pathname} {...props} />;
+};
+
+const Navbar = () => {
+  const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur">
@@ -26,16 +59,9 @@ const Navbar = () => {
         <div className="flex items-center gap-8">
           <Logo />
           <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={isActive(link.href) ? "page" : undefined}
-                className={cn("rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted", isActive(link.href) ? "text-primary" : "text-muted-foreground")}
-              >
-                {link.label}
-              </Link>
-            ))}
+            <Suspense fallback={<LinkList pathname={null} />}>
+              <ActiveLinkList />
+            </Suspense>
           </nav>
         </div>
 
@@ -56,19 +82,9 @@ const Navbar = () => {
 
       {open && (
         <nav aria-label="Mobile" className="border-t bg-background px-4 py-3 md:hidden">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className={cn("block rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted", isActive(link.href) ? "text-primary" : "text-foreground")}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <Link href="/auth/login" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-muted sm:hidden">
-            Login
-          </Link>
+          <Suspense fallback={<LinkList pathname={null} mobile />}>
+            <ActiveLinkList mobile onNavigate={() => setOpen(false)} />
+          </Suspense>
         </nav>
       )}
     </header>
