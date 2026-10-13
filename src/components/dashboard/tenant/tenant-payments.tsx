@@ -19,7 +19,7 @@ const TenantPayments = () => {
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["tenant", "payments", { status, page }],
     queryFn: () => api.get<Payment[]>("/payments", { status, page, limit: 8 }),
     placeholderData: keepPreviousData,
@@ -37,7 +37,7 @@ const TenantPayments = () => {
 
       {isPending && <TableSkeleton rows={5} columns={5} />}
 
-      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} />}
+      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} onRetry={() => refetch()} />}
 
       {data && !data.data.length && <EmptyState icon={Receipt} title="No payments found" description="Payments you make for approved rental requests will be listed here." />}
 

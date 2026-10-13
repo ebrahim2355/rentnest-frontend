@@ -37,7 +37,7 @@ const AdminUsers = () => {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey,
     queryFn: () => api.get<User[]>("/admin/users", { searchTerm, role, status, page, limit: 8 }),
     placeholderData: keepPreviousData,
@@ -112,7 +112,7 @@ const AdminUsers = () => {
 
       {isPending && <TableSkeleton rows={6} columns={5} />}
 
-      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} />}
+      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} onRetry={() => refetch()} />}
 
       {data && !data.data.length && <EmptyState icon={UserX} title="No users found" description="Try a different search or clear the filters." />}
 

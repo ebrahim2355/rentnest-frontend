@@ -16,7 +16,7 @@ import type { Review } from "@/types";
 const LandlordReviews = () => {
   const [page, setPage] = useState(1);
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["landlord", "reviews", { page }],
     queryFn: () => api.get<Review[]>("/landlord/reviews", { page, limit: 6 }),
     placeholderData: keepPreviousData,
@@ -34,7 +34,7 @@ const LandlordReviews = () => {
   }
 
   if (isError) {
-    return <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} />;
+    return <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} onRetry={() => refetch()} />;
   }
 
   if (!data.data.length) {

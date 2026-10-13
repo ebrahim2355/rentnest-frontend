@@ -79,7 +79,7 @@ const AdminCategories = () => {
   const [editing, setEditing] = useState<Category | null>(null);
   const [toDelete, setToDelete] = useState<Category | null>(null);
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => (await api.get<Category[]>("/categories")).data,
     meta: { silent: true },
@@ -116,7 +116,7 @@ const AdminCategories = () => {
 
       {isPending && <TableSkeleton rows={5} columns={4} />}
 
-      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} />}
+      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} onRetry={() => refetch()} />}
 
       {data && !data.length && <EmptyState icon={FolderTree} title="No categories yet" description="Create the first property type so landlords can use it." />}
 

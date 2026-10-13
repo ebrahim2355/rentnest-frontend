@@ -19,7 +19,7 @@ const AdminRentals = () => {
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["admin", "rentals", { status, page }],
     queryFn: () => api.get<RentalRequest[]>("/admin/rentals", { status, page, limit: 8 }),
     placeholderData: keepPreviousData,
@@ -37,7 +37,7 @@ const AdminRentals = () => {
 
       {isPending && <TableSkeleton rows={6} columns={5} />}
 
-      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} />}
+      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} onRetry={() => refetch()} />}
 
       {data && !data.data.length && <EmptyState icon={ClipboardList} title="No rental requests found" description="There is no request with this status." />}
 

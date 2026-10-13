@@ -28,7 +28,7 @@ const LandlordProperties = () => {
   const [toDelete, setToDelete] = useState<Property | null>(null);
   const queryKey = ["landlord", "properties", { status, page }];
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey,
     queryFn: () => api.get<Property[]>("/landlord/properties", { status, page, limit: 6 }),
     placeholderData: keepPreviousData,
@@ -93,7 +93,7 @@ const LandlordProperties = () => {
         </div>
       )}
 
-      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} />}
+      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} onRetry={() => refetch()} />}
 
       {data && !data.data.length && (
         <EmptyState

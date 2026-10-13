@@ -31,7 +31,7 @@ const LandlordRequests = ({ limit = 8, showTabs = true }: { limit?: number; show
   const [page, setPage] = useState(1);
   const queryKey = ["landlord", "requests", { status, page, limit }];
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey,
     queryFn: () => api.get<RentalRequest[]>("/landlord/requests", { status, page, limit }),
     placeholderData: keepPreviousData,
@@ -79,7 +79,7 @@ const LandlordRequests = ({ limit = 8, showTabs = true }: { limit?: number; show
 
       {isPending && <TableSkeleton rows={4} columns={6} />}
 
-      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} />}
+      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} onRetry={() => refetch()} />}
 
       {data && !data.data.length && (
         <EmptyState icon={Inbox} title={status ? "No requests with this status" : "No rental requests yet"} description="When a tenant asks to rent one of your properties, the request appears here." />

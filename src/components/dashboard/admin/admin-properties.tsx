@@ -25,7 +25,7 @@ const AdminProperties = () => {
   const [page, setPage] = useState(1);
   const [toRemove, setToRemove] = useState<Property | null>(null);
 
-  const { data, isPending, isError, error } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ["admin", "properties", { status, page }],
     queryFn: () => api.get<Property[]>("/admin/properties", { status, page, limit: 8 }),
     placeholderData: keepPreviousData,
@@ -53,7 +53,7 @@ const AdminProperties = () => {
 
       {isPending && <TableSkeleton rows={6} columns={5} />}
 
-      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} />}
+      {isError && <ErrorNotice title={getErrorText(error).title} description={getErrorText(error).description} onRetry={() => refetch()} />}
 
       {data && !data.data.length && <EmptyState icon={Building2} title="No listings found" description="There is no property with this status." />}
 
