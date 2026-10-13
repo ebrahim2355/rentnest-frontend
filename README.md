@@ -117,11 +117,11 @@ The navbar, the sidebar and the buttons also change with the role.
 
 ### Error handling
 
-- Every failed API call shows a toast with the message from the backend
+- Every failed action (create, update, delete, approve, pay) shows a toast with the message from the backend
 - Form validation errors show under the field. The validation errors from the backend are also put under the right field
-- Every list has a loading skeleton, an empty state and an error state with a retry button
+- Every list has a loading skeleton, an empty state and an error box with a "Try again" button
 - `error.tsx` files catch the page errors, `global-error.tsx` catches the layout errors and `not-found.tsx` is the 404 page
-- If the backend is down or the internet is off, the user sees a clear message and not a blank page
+- If the backend is down or the internet is off, the user sees a clear message and not a blank page. The lists load again by themselves when the connection is back
 - If the session is expired, the user goes to the login page with a note and comes back to the same page after the login
 
 ## Project Structure

@@ -170,10 +170,11 @@ The backend sends errors in this shape.
 | --- | --- |
 | `400` validation error with `errorDetails` | The message under the right form field |
 | `401` (token is expired or not valid) | The cookie is removed and the user goes to the login page with a "Your session has expired" note. After the login the user comes back to the same page |
-| `403`, `404`, `409` | A toast with the message from the backend |
-| `500` | A toast with a simple message |
-| No internet or backend is down | A toast that says the server cannot be reached, and an error box with a retry button on the list |
+| `403`, `404`, `409` on an action | A toast with the message from the backend |
+| `500` on an action | A toast with a simple message |
+| A list cannot load | An error box in the place of the list, with the message and a "Try again" button |
+| No internet or backend is down | A "Network error" toast for the actions and the error box on the lists. The lists load again when the connection is back |
 | Error while rendering a page | The `error.tsx` page with a "Try again" button |
 | Unknown URL | The custom 404 page |
 
-Failed queries show a toast from one place, the `QueryCache` in [src/components/providers/query-provider.tsx](./src/components/providers/query-provider.tsx). The same file handles the `401` case for the queries and the mutations. Failed mutations use `showErrorToast` from [src/lib/api.ts](./src/lib/api.ts).
+Lists show their error in a box ([src/components/ui/error-notice.tsx](./src/components/ui/error-notice.tsx)), so they do not show a toast too. The other failed queries show a toast from one place, the `QueryCache` in [src/components/providers/query-provider.tsx](./src/components/providers/query-provider.tsx). The same file handles the `401` case for the queries and the mutations. Failed mutations use `showErrorToast` from [src/lib/api.ts](./src/lib/api.ts).
