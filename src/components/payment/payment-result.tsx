@@ -9,7 +9,7 @@ import Button, { buttonStyles } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import ErrorNotice from "@/components/ui/error-notice";
 import { api, getErrorText } from "@/lib/api";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, toTitleCase } from "@/lib/utils";
 import type { Payment } from "@/types";
 
 const PaymentResult = () => {
@@ -102,8 +102,8 @@ const PaymentResult = () => {
         </div>
         <div className="flex justify-between gap-4">
           <dt className="text-muted-foreground">Payment method</dt>
-          <dd className="font-medium capitalize">
-            {data.method} via {data.provider.toLowerCase()}
+          <dd className="font-medium">
+            {toTitleCase(data.method)} via {toTitleCase(data.provider)}
           </dd>
         </div>
         <div className="flex justify-between gap-4">
