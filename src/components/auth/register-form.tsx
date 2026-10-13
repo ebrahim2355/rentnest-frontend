@@ -5,7 +5,7 @@ import { Building2, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { useAuth } from "@/components/providers/auth-provider";
 import Button from "@/components/ui/button";
@@ -29,7 +29,7 @@ const RegisterForm = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({
@@ -37,7 +37,7 @@ const RegisterForm = () => {
     defaultValues: { name: "", email: "", phone: "", role: "TENANT", password: "", confirmPassword: "" },
   });
 
-  const selectedRole = watch("role");
+  const selectedRole = useWatch({ control, name: "role" });
 
   const onSubmit = async (values: RegisterValues) => {
     setFormError(null);

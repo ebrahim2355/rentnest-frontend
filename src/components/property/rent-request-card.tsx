@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CalendarCheck, CircleCheck, Info, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { useAuth } from "@/components/providers/auth-provider";
 import Button, { buttonStyles } from "@/components/ui/button";
@@ -42,7 +42,7 @@ const RequestForm = ({ property }: RentRequestCardProps) => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setError,
     formState: { errors },
   } = useForm<RentalRequestValues>({
@@ -50,7 +50,7 @@ const RequestForm = ({ property }: RentRequestCardProps) => {
     defaultValues: { moveInDate: "", durationMonths: 6, message: "" },
   });
 
-  const months = watch("durationMonths");
+  const months = useWatch({ control, name: "durationMonths" });
   const total = Number(property.rent) * (Number.isFinite(months) ? months : 0);
 
   const mutation = useMutation({

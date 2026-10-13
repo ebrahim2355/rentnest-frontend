@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ImagePlus, Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import PropertyImage from "@/components/property/property-image";
 import Button from "@/components/ui/button";
@@ -48,7 +48,7 @@ const PropertyForm = ({ property }: { property?: Property }) => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     setError,
     formState: { errors },
@@ -68,8 +68,8 @@ const PropertyForm = ({ property }: { property?: Property }) => {
     },
   });
 
-  const amenities = watch("amenities");
-  const images = watch("images");
+  const amenities = useWatch({ control, name: "amenities" });
+  const images = useWatch({ control, name: "images" });
   const amenityOptions = [...new Set([...COMMON_AMENITIES, ...amenities])];
 
   const mutation = useMutation({

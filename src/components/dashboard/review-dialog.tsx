@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Star } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import Button from "@/components/ui/button";
 import { Field, Textarea } from "@/components/ui/form-field";
@@ -24,7 +24,7 @@ const ReviewForm = ({ rental, onClose }: { rental: RentalRequest; onClose: () =>
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     setError,
     formState: { errors },
@@ -33,7 +33,7 @@ const ReviewForm = ({ rental, onClose }: { rental: RentalRequest; onClose: () =>
     defaultValues: { rating: 0, comment: "" },
   });
 
-  const rating = watch("rating");
+  const rating = useWatch({ control, name: "rating" });
 
   const mutation = useMutation({
     mutationFn: (values: ReviewValues) => api.post<Review>("/reviews", { rentalRequestId: rental.id, ...values }),
