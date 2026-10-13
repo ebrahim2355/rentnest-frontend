@@ -19,6 +19,7 @@ const LoginForm = () => {
   const searchParams = useSearchParams();
   const { login } = useAuth();
   const [formError, setFormError] = useState<string | null>(null);
+  const sessionExpired = searchParams.get("expired") === "1";
 
   const {
     register,
@@ -67,6 +68,12 @@ const LoginForm = () => {
       {formError && (
         <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive">
           {formError}
+        </p>
+      )}
+
+      {sessionExpired && !formError && (
+        <p role="status" className="rounded-lg border bg-muted px-4 py-3 text-sm font-medium">
+          Your session has expired. Please login again.
         </p>
       )}
 

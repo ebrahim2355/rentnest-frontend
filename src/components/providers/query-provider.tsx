@@ -1,6 +1,7 @@
 "use client";
 
-import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { ApiError, showErrorToast } from "@/lib/api";
 
@@ -12,15 +13,29 @@ const shouldRetry = (failureCount: number, error: unknown) => {
   return failureCount < 1;
 };
 
-const createQueryClient = () => {
-  return new QueryClient({
+const isExpiredSession = (error: unknown) => error instanceof ApiError && error.status === 401;
+
+const createQueryClient = (onExpiredSession: (client: QueryClient) => void) => {
+  const client: QueryClient = new QueryClient({
     queryCache: new QueryCache({
       onError: (error, query) => {
+        if (isExpiredSession(error)) {
+          onExpiredSession(client);
+          return;
+        }
+
         if (query.meta?.silent) {
           return;
         }
 
         showErrorToast(error);
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        if (isExpiredSession(error)) {
+          onExpiredSession(client);
+        }
       },
     }),
     defaultOptions: {
@@ -31,10 +46,25 @@ const createQueryClient = () => {
       },
     },
   });
+
+  return client;
 };
 
 const QueryProvider = ({ children }: { children: ReactNode }) => {
-  const [queryClient] = useState(createQueryClient);
+  const router = useRouter();
+
+  const [queryClient] = useState(() =>
+    createQueryClient((client) => {
+      const { pathname, search } = window.location;
+
+      if (pathname.startsWith("/auth")) {
+        return;
+      }
+
+      client.setQueryData(["auth", "me"], null);
+      router.replace(`/auth/login?expired=1&redirect=${encodeURIComponent(`${pathname}${search}`)}`);
+    })
+  );
 
   return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
