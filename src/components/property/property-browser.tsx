@@ -34,13 +34,24 @@ const PropertyBrowser = ({ categories, children }: PropertyBrowserProps) => {
   const [showFilters, setShowFilters] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [text, setText] = useState<TextValues>({
+  const urlText: TextValues = {
     searchTerm: searchParams.get("searchTerm") ?? "",
     location: searchParams.get("location") ?? "",
     minPrice: searchParams.get("minPrice") ?? "",
     maxPrice: searchParams.get("maxPrice") ?? "",
-  });
-  const latestText = useRef(text);
+  };
+  const urlKey = textKeys.map((key) => urlText[key]).join("|");
+
+  const [text, setText] = useState<TextValues>(urlText);
+  const [syncedKey, setSyncedKey] = useState(urlKey);
+
+  if (urlKey !== syncedKey) {
+    setSyncedKey(urlKey);
+
+    if (textKeys.some((key) => urlText[key] !== text[key].trim())) {
+      setText(urlText);
+    }
+  }
 
   const selectedAmenities = (searchParams.get("amenities") ?? "").split(",").filter(Boolean);
   const activeCount = [...searchParams.keys()].filter((key) => key !== "page").length;
@@ -71,9 +82,8 @@ const PropertyBrowser = ({ categories, children }: PropertyBrowserProps) => {
   };
 
   const handleTextChange = (key: TextKey, value: string) => {
-    const next = { ...latestText.current, [key]: value };
+    const next = { ...text, [key]: value };
 
-    latestText.current = next;
     setText(next);
 
     if (timerRef.current) {
@@ -84,7 +94,7 @@ const PropertyBrowser = ({ categories, children }: PropertyBrowserProps) => {
       const changes: Record<string, string> = {};
 
       textKeys.forEach((textKey) => {
-        changes[textKey] = latestText.current[textKey].trim();
+        changes[textKey] = next[textKey].trim();
       });
 
       applyChanges(changes);
@@ -112,7 +122,6 @@ const PropertyBrowser = ({ categories, children }: PropertyBrowserProps) => {
       clearTimeout(timerRef.current);
     }
 
-    latestText.current = empty;
     setText(empty);
     startTransition(() => {
       router.replace(pathname, { scroll: false });
