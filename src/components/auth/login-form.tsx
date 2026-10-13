@@ -25,6 +25,7 @@ const LoginForm = () => {
     handleSubmit,
     setValue,
     setError,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -39,6 +40,7 @@ const LoginForm = () => {
       const redirect = searchParams.get("redirect");
       const target = redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : DASHBOARD_HOME[user.role];
 
+      reset();
       toast.success(`Welcome back, ${user.name}`);
       router.replace(target);
       router.refresh();

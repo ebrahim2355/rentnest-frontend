@@ -31,6 +31,7 @@ const RegisterForm = () => {
     handleSubmit,
     control,
     setError,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -51,6 +52,7 @@ const RegisterForm = () => {
         ...(values.phone ? { phone: values.phone } : {}),
       });
 
+      reset();
       toast.success("Account created", { description: `Welcome to RentNest, ${user.name}` });
       router.replace(DASHBOARD_HOME[user.role]);
       router.refresh();

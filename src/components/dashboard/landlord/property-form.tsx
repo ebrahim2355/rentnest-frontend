@@ -51,6 +51,7 @@ const PropertyForm = ({ property }: { property?: Property }) => {
     control,
     setValue,
     setError,
+    reset,
     formState: { errors },
   } = useForm<PropertyValues>({
     resolver: zodResolver(propertySchema),
@@ -77,6 +78,13 @@ const PropertyForm = ({ property }: { property?: Property }) => {
     onSuccess: () => {
       toast.success(isEdit ? "Property updated" : "Property listed", { description: isEdit ? "Your changes are saved." : "Tenants can now find it and send requests." });
       queryClient.invalidateQueries({ queryKey: ["landlord"] });
+
+      if (!isEdit) {
+        reset();
+        setImageUrl("");
+        setCustomAmenity("");
+      }
+
       router.push("/dashboard/landlord/properties");
     },
     onError: (error) => {
