@@ -15,15 +15,26 @@ interface FieldProps {
 }
 
 export const Field = ({ label, htmlFor, error, hint, required, className, children }: FieldProps) => {
+  const labelText = label && (
+    <span className="mb-1.5 block text-sm font-medium text-foreground">
+      {label}
+      {required && <span className="ml-0.5 text-destructive">*</span>}
+    </span>
+  );
+
   return (
     <div className={cn("space-y-1.5", className)}>
-      {label && (
-        <label htmlFor={htmlFor} className="block text-sm font-medium text-foreground">
-          {label}
-          {required && <span className="ml-0.5 text-destructive">*</span>}
+      {htmlFor ? (
+        <label className="block">
+          {labelText}
+          {children}
         </label>
+      ) : (
+        <div>
+          {labelText}
+          {children}
+        </div>
       )}
-      {children}
       {hint && !error && <p className="text-xs text-muted-foreground">{hint}</p>}
       {error && (
         <p role="alert" className="text-xs font-medium text-destructive">
