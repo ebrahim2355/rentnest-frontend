@@ -10,7 +10,8 @@ The frontend is built with Next.js (App Router) and it uses my own RentNest back
 
 | Item | Link |
 | --- | --- |
-| Live Frontend | Add the Vercel link here after the deploy |
+| Live Frontend | https://rentnest-frontend-gold.vercel.app |
+| Frontend Repo | https://github.com/ebrahim2355/rentnest-frontend |
 | Backend API | https://rentnest-backend-red.vercel.app |
 | Backend API Docs | https://rentnest-backend-red.vercel.app/api/docs |
 | Backend Repo | https://github.com/ebrahim2355/rentnest-backend |
@@ -163,7 +164,7 @@ You need Node.js 20 or newer and a running RentNest backend.
 1. Clone the repo and install the packages
 
 ```bash
-git clone <this-repo-url>
+git clone https://github.com/ebrahim2355/rentnest-frontend.git
 cd rentnest-frontend
 npm install
 ```
