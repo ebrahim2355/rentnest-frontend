@@ -43,6 +43,11 @@ const createQueryClient = (onExpiredSession: (client: QueryClient) => void) => {
         staleTime: 30_000,
         refetchOnWindowFocus: false,
         retry: shouldRetry,
+        networkMode: "always",
+        refetchOnReconnect: true,
+      },
+      mutations: {
+        networkMode: "always",
       },
     },
   });
